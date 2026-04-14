@@ -1,0 +1,221 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}{% if post %}Editar post{% else %}Nuevo post{% endif %}{% endblock %}
+{% block topbar_title %}{% if post %}Editar post{% else %}Nuevo post{% endif %}{% endblock %}
+
+{% set active = "nuevo" %}
+
+{% block extra_head %}
+<style>
+  .form-wrap {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  .form-main, .form-sidebar { }
+  .form-group {
+    margin-bottom: 1.2rem;
+  }
+  label {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 0.4rem;
+  }
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    width: 100%;
+    padding: 0.65rem 0.9rem;
+    border: 1.5px solid var(--line);
+    background: #fff;
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--ink);
+    outline: none;
+    transition: border-color .18s;
+    -webkit-appearance: none;
+  }
+  input:focus, textarea:focus, select:focus {
+    border-color: var(--ink);
+  }
+  textarea {
+    resize: vertical;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.7;
+  }
+  .hint {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: var(--ink-muted);
+    margin-top: 0.3rem;
+    line-height: 1.5;
+  }
+  .toggle-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0.7rem 0;
+  }
+  .toggle-label {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--ink-soft);
+  }
+  /* Toggle switch */
+  .toggle {
+    position: relative;
+    display: inline-block;
+    width: 36px;
+    height: 20px;
+  }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0;
+    background: var(--line);
+    transition: .2s;
+    border-radius: 20px;
+    cursor: pointer;
+  }
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 14px; width: 14px;
+    left: 3px; bottom: 3px;
+    background: #fff;
+    transition: .2s;
+    border-radius: 50%;
+  }
+  input:checked + .slider { background: var(--success); }
+  input:checked + .slider:before { transform: translateX(16px); }
+
+  .form-actions {
+    display: flex; gap: 0.8rem; align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+    margin-top: 1.5rem;
+  }
+
+  /* Markdown preview hint */
+  .syntax-card {
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    padding: 1rem 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    line-height: 1.8;
+    color: var(--ink-muted);
+  }
+  .syntax-card strong { color: var(--ink); font-weight: 500; }
+  .syntax-card .kw { color: var(--accent); }
+
+  @media(max-width: 768px) {
+    .form-wrap { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div style="margin-bottom:1.2rem">
+  <a href="/admin" class="btn btn-sm btn-ghost">← Volver al dashboard</a>
+</div>
+
+<form method="post" action="{% if post %}/admin/posts/{{ post.id }}/editar{% else %}/admin/posts/nuevo{% endif %}">
+  <div class="form-wrap">
+
+    <!-- Main column -->
+    <div class="form-main">
+      <div class="card">
+        <div class="form-group">
+          <label>Título del post *</label>
+          <input type="text" name="title" value="{{ post.title if post else '' }}"
+                 placeholder="Ej: Lo que aprendí sobre funciones en Python"
+                 required autofocus>
+        </div>
+
+        <div class="form-group">
+          <label>Resumen / descripción *</label>
+          <textarea name="summary" rows="2" required
+                    placeholder="Una oración que capture la esencia del post. Aparece en el listado del blog.">{{ post.summary if post else '' }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label>Contenido *</label>
+          <textarea name="content" rows="22" required
+                    placeholder="Escribe tu post aquí. Soporta formato básico: **negrita**, bloques de código con ``` y secciones con **Título**">{{ post.content if post else '' }}</textarea>
+          <p class="hint">El contenido soporta formato básico. Ver guía de sintaxis →</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sidebar column -->
+    <div class="form-sidebar">
+      <div class="card" style="margin-bottom:1rem">
+        <div class="section-label">Publicación</div>
+
+        <div class="form-group">
+          <div class="toggle-group">
+            <label class="toggle">
+              <input type="checkbox" name="published" value="1"
+                     {% if post and post.published %}checked{% elif not post %}checked{% endif %}>
+              <span class="slider"></span>
+            </label>
+            <span class="toggle-label">Publicar inmediatamente</span>
+          </div>
+          <p class="hint">Si está desactivado, el post se guarda como borrador y no es visible en el blog.</p>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">
+            {% if post %}Guardar cambios{% else %}Publicar post{% endif %} →
+          </button>
+          <a href="/admin" class="btn btn-ghost btn-sm">Cancelar</a>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:1rem">
+        <div class="section-label">Categoría</div>
+        <div class="form-group">
+          <label>Categoría *</label>
+          <select name="category">
+            <option value="computacion" {% if post and post.category=='computacion' %}selected{% endif %}>Computación</option>
+            <option value="matematicas"  {% if post and post.category=='matematicas'  %}selected{% endif %}>Matemáticas</option>
+            <option value="fisica"       {% if post and post.category=='fisica'       %}selected{% endif %}>Física</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tags (separados por coma)</label>
+          <input type="text" name="tags"
+                 value="{{ post.tags_str if post else '' }}"
+                 placeholder="python, funciones, backend">
+          <p class="hint">Ej: python, algoritmos, aprendizaje</p>
+        </div>
+      </div>
+
+      <div class="syntax-card">
+        <strong>Guía de formato</strong><br><br>
+        <span class="kw">**Título de sección**</span><br>
+        Convierte en subtítulo<br><br>
+        <span class="kw">```python</span><br>
+        tu_codigo()<br>
+        <span class="kw">```</span><br>
+        Bloque de código<br><br>
+        Párrafos separados por<br>
+        una línea en blanco.<br><br>
+        <strong>Tip:</strong> escribe naturalmente,<br>
+        el sistema formatea solo.
+      </div>
+    </div>
+
+  </div>
+</form>
+
+{% endblock %}

@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+venv/
+env/
+.env
+
+# Base de datos local (Railway usa la suya)
+database/portfolio.db
+
+# Sistema
+.DS_Store
+*.log

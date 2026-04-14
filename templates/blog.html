@@ -1,0 +1,201 @@
+{% extends "base.html" %}
+
+{% block title %}Blog — Ezequiel Zamora{% endblock %}
+
+{% block extra_head %}
+<style>
+  .blog-hero {
+    padding: 5rem var(--gap) 3rem;
+    border-bottom: 1px solid var(--line);
+    background: var(--paper-warm);
+  }
+  .blog-hero-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: end;
+    gap: 3rem;
+  }
+  .blog-hero h1 { margin-top: 0.8rem; }
+  .blog-hero p {
+    color: var(--ink-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+    max-width: 40ch;
+  }
+  .blog-filters {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    align-self: end;
+    justify-content: flex-end;
+  }
+  .filter-btn {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink-muted);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all .18s;
+  }
+  .filter-btn:hover { border-color: var(--ink); color: var(--ink); }
+  .filter-btn.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .filter-btn.cat-computacion.active { background: var(--accent-alt); border-color: var(--accent-alt); }
+  .filter-btn.cat-matematicas.active { background: #7c3aed; border-color: #7c3aed; }
+  .filter-btn.cat-fisica.active { background: var(--accent); border-color: var(--accent); }
+
+  .blog-grid {
+    max-width: var(--max-w);
+    margin: 4rem auto;
+    padding: 0 var(--gap);
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+  }
+  .blog-card {
+    background: var(--paper);
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    text-decoration: none;
+    color: inherit;
+    transition: background .2s;
+    position: relative;
+    overflow: hidden;
+  }
+  .blog-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .25s;
+  }
+  .blog-card:hover { background: var(--paper-warm); }
+  .blog-card:hover::after { transform: scaleX(1); }
+  .blog-card:hover .card-title { color: var(--accent); }
+
+  .card-cat {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border: 1px solid;
+    display: inline-block;
+    margin-bottom: 1rem;
+    width: fit-content;
+  }
+  .cat-computacion { color: var(--accent-alt); border-color: var(--accent-alt); background: rgba(26,79,140,0.05); }
+  .cat-matematicas { color: #7c3aed; border-color: #7c3aed; background: rgba(124,58,237,0.05); }
+  .cat-fisica      { color: var(--accent); border-color: var(--accent); background: rgba(200,65,10,0.05); }
+
+  .card-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-bottom: 0.8rem;
+    transition: color .2s;
+  }
+  .card-summary {
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+    line-height: 1.65;
+    flex: 1;
+  }
+  .card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .card-date {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--ink-muted);
+  }
+  .card-read {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    letter-spacing: 0.04em;
+  }
+
+  .empty-state {
+    grid-column: 1 / -1;
+    padding: 4rem;
+    text-align: center;
+    color: var(--ink-muted);
+    background: var(--paper);
+    font-family: var(--font-mono);
+    font-size: 0.9rem;
+  }
+
+  @media(max-width: 640px) {
+    .blog-hero-inner { grid-template-columns: 1fr; }
+    .blog-filters { justify-content: flex-start; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="blog-hero">
+  <div class="blog-hero-inner">
+    <div>
+      <div class="section-label">Blog</div>
+      <h1>Notas desde<br>el proceso</h1>
+      <p>Computación, matemáticas y física desde la perspectiva de alguien que está aprendiendo en serio.</p>
+    </div>
+    <div class="blog-filters">
+      <a href="/blog" class="filter-btn {% if not categoria_activa %}active{% endif %}">
+        Todos
+      </a>
+      <a href="/blog?categoria=computacion" class="filter-btn cat-computacion {% if categoria_activa == 'computacion' %}active{% endif %}">
+        Computación
+      </a>
+      <a href="/blog?categoria=matematicas" class="filter-btn cat-matematicas {% if categoria_activa == 'matematicas' %}active{% endif %}">
+        Matemáticas
+      </a>
+      <a href="/blog?categoria=fisica" class="filter-btn cat-fisica {% if categoria_activa == 'fisica' %}active{% endif %}">
+        Física
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="blog-grid">
+  {% if posts %}
+    {% for post in posts %}
+    <a href="/blog/{{ post.slug }}" class="blog-card animate" style="animation-delay: {{ loop.index0 * 0.08 }}s">
+      <span class="card-cat cat-{{ post.category }}">{{ post.category | capitalize }}</span>
+      <div class="card-title">{{ post.title }}</div>
+      <div class="card-summary">{{ post.summary }}</div>
+      <div class="card-footer">
+        <span class="card-date">
+          {{ post.created_at[:10] }}
+        </span>
+        <span class="card-read">Leer →</span>
+      </div>
+    </a>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      Aún no hay posts en esta categoría.<br>
+      <a href="/blog" style="color:var(--accent)">Ver todos los posts →</a>
+    </div>
+  {% endif %}
+</div>
+
+{% endblock %}

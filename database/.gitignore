@@ -1,0 +1,2 @@
+# Ignorar el archivo de base de datos pero mantener la carpeta
+*.db

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin — Acceso</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:    #0a0a0f;
+      --paper:  #f5f3ee;
+      --accent: #c8410a;
+      --line:   #d4cfc5;
+      --error:  #dc2626;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ink);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .login-box {
+      background: var(--paper);
+      width: 100%;
+      max-width: 380px;
+      padding: 3rem 2.5rem;
+      animation: fadeUp .4s ease both;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(20px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .login-eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.7rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.6rem;
+    }
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.9rem;
+      color: var(--ink);
+      margin-bottom: 2rem;
+      line-height: 1.2;
+    }
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+    label {
+      display: block;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 0.4rem;
+    }
+    input {
+      width: 100%;
+      padding: 0.7rem 0.9rem;
+      border: 1.5px solid var(--line);
+      background: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.95rem;
+      color: var(--ink);
+      outline: none;
+      transition: border-color .2s;
+    }
+    input:focus { border-color: var(--ink); }
+    .error-msg {
+      background: rgba(220,38,38,0.08);
+      border: 1px solid rgba(220,38,38,0.3);
+      color: var(--error);
+      font-family: 'DM Mono', monospace;
+      font-size: 0.75rem;
+      padding: 0.6rem 0.8rem;
+      margin-bottom: 1.2rem;
+    }
+    button {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--ink);
+      color: var(--paper);
+      border: none;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      margin-top: 0.5rem;
+      transition: background .2s;
+    }
+    button:hover { background: var(--accent); }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      color: #aaa;
+      text-decoration: none;
+      transition: color .2s;
+    }
+    .back-link:hover { color: var(--ink); }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <p class="login-eyebrow">Panel de administración</p>
+    <h1>Acceso<br><em>restringido</em></h1>
+
+    {% if error %}
+    <div class="error-msg">⚠ {{ error }}</div>
+    {% endif %}
+
+    <form method="post" action="/admin/login">
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" name="username" autocomplete="username" required autofocus>
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" name="password" autocomplete="current-password" required>
+      </div>
+      <button type="submit">Entrar →</button>
+    </form>
+    <a href="/" class="back-link">← Volver al sitio</a>
+  </div>
+</body>
+</html>

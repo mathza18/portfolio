@@ -1,0 +1,731 @@
+{% extends "base.html" %}
+
+{% block title %}Ezequiel Zamora — Python Backend Developer{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* ── HERO ───────────────────────────────────────────── */
+  .hero {
+    min-height: 92vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    gap: 4rem;
+    padding: 5rem var(--gap) 3rem;
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+  .hero-eyebrow {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    letter-spacing: 0.12em;
+    color: var(--ink-muted);
+    margin-bottom: 1.2rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .hero-eyebrow::before {
+    content:'';
+    width: 28px; height: 1px;
+    background: var(--accent);
+  }
+  .hero h1 {
+    margin-bottom: 1.5rem;
+    color: var(--ink);
+  }
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .hero-desc {
+    font-size: 1.05rem;
+    color: var(--ink-soft);
+    margin-bottom: 2rem;
+    max-width: 44ch;
+    line-height: 1.8;
+  }
+  .hero-ctas {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+  .hero-visual {
+    position: relative;
+  }
+  .terminal {
+    background: var(--code-bg);
+    border: 1px solid #2a2a3a;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    line-height: 1.7;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .terminal::before {
+    content: '●  ●  ●';
+    display: block;
+    color: #555;
+    font-size: 0.7rem;
+    margin-bottom: 1rem;
+    letter-spacing: 4px;
+  }
+  .t-comment { color: #4a5568; }
+  .t-key     { color: #9ecbff; }
+  .t-str     { color: #b5c9e8; }
+  .t-accent  { color: #f97316; }
+  .t-green   { color: #86efac; }
+  .cursor {
+    display: inline-block;
+    width: 8px; height: 1em;
+    background: var(--accent);
+    vertical-align: middle;
+    animation: blink 1.1s step-end infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+  .hero-scroll {
+    position: absolute;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 6px;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    animation: float 2s ease-in-out infinite;
+  }
+  @keyframes float {
+    0%,100% { transform: translateX(-50%) translateY(0); }
+    50%      { transform: translateX(-50%) translateY(-5px); }
+  }
+  .scroll-arrow { font-size: 1rem; }
+
+  /* ── ABOUT ──────────────────────────────────────────── */
+  .about {
+    background: var(--paper-warm);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 5rem var(--gap);
+  }
+  .about-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.6fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .about-side-label {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 1;
+    color: var(--line);
+    font-style: italic;
+    user-select: none;
+    margin-bottom: 1rem;
+  }
+  .about-body p {
+    color: var(--ink-soft);
+    margin-bottom: 1.2rem;
+    font-size: 1.05rem;
+  }
+  .about-body p strong { color: var(--ink); }
+  .badges {
+    display: flex; flex-wrap: wrap; gap: 0.6rem;
+    margin-top: 1.8rem;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 4px 12px;
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    background: var(--paper);
+    letter-spacing: 0.04em;
+  }
+  .badge.hot {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(200,65,10,0.05);
+  }
+
+  /* ── STACK ──────────────────────────────────────────── */
+  .stack-section {
+    padding: 5rem var(--gap);
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+  .stack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1px;
+    border: 1px solid var(--line);
+    background: var(--line);
+    margin-top: 2.5rem;
+  }
+  .stack-item {
+    background: var(--paper);
+    padding: 1.5rem;
+    display: flex; flex-direction: column; gap: 6px;
+    transition: background .2s;
+  }
+  .stack-item:hover { background: var(--paper-warm); }
+  .stack-icon { font-size: 1.5rem; }
+  .stack-name {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--ink);
+  }
+  .stack-level {
+    font-size: 0.7rem;
+    color: var(--ink-muted);
+  }
+  .stack-bar {
+    height: 2px;
+    background: var(--line);
+    margin-top: 4px;
+  }
+  .stack-bar-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s ease;
+  }
+
+  /* ── PROYECTOS ──────────────────────────────────────── */
+  .projects-section {
+    background: var(--paper-warm);
+    border-top: 1px solid var(--line);
+    border-bottom: 1px solid var(--line);
+    padding: 5rem var(--gap);
+  }
+  .projects-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-top: 2.5rem;
+  }
+  .project-card {
+    background: var(--paper);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background .25s;
+    display: flex; flex-direction: column;
+  }
+  .project-card:hover { background: var(--paper-warm); }
+  .project-card::before {
+    content: attr(data-num);
+    position: absolute;
+    top: -0.3rem; right: 1rem;
+    font-family: var(--font-serif);
+    font-size: 5rem;
+    color: var(--line);
+    line-height: 1;
+    pointer-events: none;
+    transition: color .2s;
+  }
+  .project-card:hover::before { color: rgba(200,65,10,0.1); }
+  .project-cat {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.7rem;
+  }
+  .project-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.7rem;
+    color: var(--ink);
+  }
+  .project-card p {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    flex: 1;
+  }
+  .project-footer {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    margin-top: 1.2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    padding: 2px 8px;
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+  }
+  .wip-badge {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    padding: 2px 8px;
+    background: rgba(200,65,10,0.1);
+    border: 1px solid rgba(200,65,10,0.3);
+    color: var(--accent);
+    margin-left: auto;
+    align-self: center;
+  }
+
+  /* ── BLOG PREVIEW ───────────────────────────────────── */
+  .blog-preview {
+    padding: 5rem var(--gap);
+    max-width: var(--max-w);
+    margin: 0 auto;
+  }
+  .blog-preview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem;
+  }
+  .post-list { display: flex; flex-direction: column; gap: 0; }
+  .post-item {
+    display: grid;
+    grid-template-columns: 90px 1fr auto;
+    align-items: start;
+    gap: 1.5rem;
+    padding: 1.5rem 0;
+    border-bottom: 1px solid var(--line);
+    text-decoration: none;
+    color: inherit;
+    transition: background .2s;
+    cursor: pointer;
+  }
+  .post-item:hover .post-title { color: var(--accent); }
+  .post-num {
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    color: var(--line);
+    font-style: italic;
+    line-height: 1;
+    padding-top: 4px;
+  }
+  .post-cat-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    margin-bottom: 0.4rem;
+    border: 1px solid;
+  }
+  .cat-computacion { color: var(--accent-alt); border-color: var(--accent-alt); background: rgba(26,79,140,0.05); }
+  .cat-matematicas { color: #7c3aed; border-color: #7c3aed; background: rgba(124,58,237,0.05); }
+  .cat-fisica      { color: var(--accent); border-color: var(--accent); background: rgba(200,65,10,0.05); }
+  .post-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    color: var(--ink);
+    transition: color .2s;
+    margin-bottom: 0.3rem;
+  }
+  .post-summary {
+    font-size: 0.85rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+  }
+  .post-arrow {
+    font-size: 1.2rem;
+    color: var(--line);
+    padding-top: 6px;
+    transition: transform .2s, color .2s;
+  }
+  .post-item:hover .post-arrow {
+    transform: translateX(5px);
+    color: var(--accent);
+  }
+
+  /* ── CONTACT ────────────────────────────────────────── */
+  .contact-section {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 6rem var(--gap);
+  }
+  .contact-inner {
+    max-width: var(--max-w);
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1.4fr;
+    gap: 5rem;
+    align-items: start;
+  }
+  .contact-left .section-label {
+    color: rgba(245,243,238,0.4);
+  }
+  .contact-left .section-label::after {
+    background: rgba(245,243,238,0.4);
+  }
+  .contact-left h2 { color: var(--paper); }
+  .contact-left p {
+    color: rgba(245,243,238,0.65);
+    margin-top: 1rem;
+    font-size: 1rem;
+    line-height: 1.8;
+  }
+  .contact-links {
+    margin-top: 2rem;
+    display: flex; flex-direction: column; gap: 0.8rem;
+  }
+  .contact-link {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: rgba(245,243,238,0.6);
+    display: flex; align-items: center; gap: 10px;
+    transition: color .2s;
+  }
+  .contact-link:hover { color: var(--paper); }
+  .contact-link-icon { font-size: 1rem; }
+  .form-group {
+    display: flex; flex-direction: column; gap: 0.4rem;
+    margin-bottom: 1.2rem;
+  }
+  .form-group label {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    color: rgba(245,243,238,0.5);
+    text-transform: uppercase;
+  }
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    background: rgba(245,243,238,0.05);
+    border: 1px solid rgba(245,243,238,0.15);
+    color: var(--paper);
+    font-family: var(--font-body);
+    font-size: 0.95rem;
+    padding: 0.75rem 1rem;
+    outline: none;
+    transition: border-color .2s;
+    width: 100%;
+    resize: none;
+    -webkit-appearance: none;
+  }
+  .form-group input:focus,
+  .form-group textarea:focus {
+    border-color: rgba(245,243,238,0.4);
+  }
+  .form-group input::placeholder,
+  .form-group textarea::placeholder {
+    color: rgba(245,243,238,0.25);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .form-submit .btn {
+    border-color: var(--paper);
+    color: var(--paper);
+    width: 100%;
+    justify-content: center;
+    padding: 0.85rem;
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    margin-top: 0.5rem;
+  }
+  .form-submit .btn:hover {
+    background: var(--paper);
+    color: var(--ink);
+  }
+  .success-msg {
+    background: rgba(134,239,172,0.1);
+    border: 1px solid rgba(134,239,172,0.3);
+    color: #86efac;
+    padding: 1rem 1.2rem;
+    font-family: var(--font-mono);
+    font-size: 0.82rem;
+    margin-bottom: 1.5rem;
+    display: flex; gap: 8px; align-items: center;
+  }
+
+  /* ── RESPONSIVE ─────────────────────────────────────── */
+  @media(max-width: 768px) {
+    .hero { grid-template-columns: 1fr; min-height: auto; gap: 2rem; }
+    .hero-visual { display: none; }
+    .about-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .about-side-label { display: none; }
+    .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+    .post-item { grid-template-columns: 50px 1fr; }
+    .post-arrow { display: none; }
+    .form-row { grid-template-columns: 1fr; }
+    .blog-preview-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── HERO ──────────────────────────────────────────────── -->
+<div style="max-width:var(--max-w); margin:0 auto; padding:0 var(--gap);">
+  <section class="hero">
+    <div>
+      <p class="hero-eyebrow animate">Disponible para oportunidades remotas</p>
+      <h1 class="animate delay-1">
+        Construyendo el <em>backend</em> del futuro
+      </h1>
+      <p class="hero-desc animate delay-2">
+        Hola, soy <strong>Ezequiel Zamora</strong>. Venezolano en Santiago, aprendiz de Python backend y eterno curioso de la computación, las matemáticas y la física.
+      </p>
+      <div class="hero-ctas animate delay-3">
+        <a href="#proyectos" class="btn btn-solid">Ver proyectos →</a>
+        <a href="#contacto" class="btn">Contáctame</a>
+      </div>
+    </div>
+
+    <div class="hero-visual animate delay-2">
+      <div class="terminal">
+        <span class="t-comment"># ez_zamora/profile.py</span><br><br>
+        <span class="t-key">class</span> <span class="t-accent">Developer</span>:<br>
+        &nbsp;&nbsp;<span class="t-key">name</span> <span style="color:#fff">=</span> <span class="t-str">"Ezequiel Zamora"</span><br>
+        &nbsp;&nbsp;<span class="t-key">location</span> <span style="color:#fff">=</span> <span class="t-str">"Santiago, Chile 🇨🇱"</span><br>
+        &nbsp;&nbsp;<span class="t-key">stack</span> <span style="color:#fff">=</span> [<span class="t-str">"Python"</span>, <span class="t-str">"FastAPI"</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"PostgreSQL"</span>, <span class="t-str">"Docker"</span>]<br>
+        &nbsp;&nbsp;<span class="t-key">interests</span> <span style="color:#fff">=</span> [<span class="t-str">"Backend"</span>, <span class="t-str">"Electrónica"</span>,<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="t-str">"Robótica"</span>, <span class="t-str">"Física"</span>]<br>
+        &nbsp;&nbsp;<span class="t-key">status</span> <span style="color:#fff">=</span> <span class="t-green">"Aprendiendo & construyendo"</span><br><br>
+        <span class="t-comment"># $ python profile.py</span><br>
+        <span class="t-green">▶</span> Listo para nuevos proyectos<span class="cursor"></span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- ── ABOUT ─────────────────────────────────────────────── -->
+<section class="about" id="sobre-mi">
+  <div class="about-inner">
+    <div>
+      <div class="about-side-label">01</div>
+      <div class="section-label">Sobre mí</div>
+    </div>
+    <div class="about-body">
+      <p>
+        Soy <strong>Ezequiel Zamora</strong>, venezolano construyendo mi carrera en tecnología desde Santiago de Chile. Actualmente trabajo en construcción mientras me preparo para dar el salto definitivo al mundo tech.
+      </p>
+      <p>
+        Estudié un año de Ingeniería en Computación en Venezuela (2022) antes de emigrar. Esa base —algoritmos, lógica, estructuras de datos— sigue viva y es la que me permite aprender Python con profundidad, no solo de memoria.
+      </p>
+      <p>
+        Mi meta es convertirme en <strong>Python Backend Developer</strong> en los próximos 10–12 meses. Sigo un plan de estudio estructurado con FastAPI, PostgreSQL, SQLAlchemy y Docker. Paralelamente, me interesa la electrónica y la robótica como horizonte de largo plazo.
+      </p>
+      <p>
+        Cuando no estoy programando: café de especialidad, matemáticas por placer, y física cuando la mente lo permite.
+      </p>
+      <div class="badges">
+        <span class="badge hot">Python 3</span>
+        <span class="badge hot">FastAPI</span>
+        <span class="badge hot">SQLite / PostgreSQL</span>
+        <span class="badge">Git / GitHub</span>
+        <span class="badge">Linux</span>
+        <span class="badge">Docker (aprendiendo)</span>
+        <span class="badge">Arduino</span>
+        <span class="badge">Álgebra Lineal</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TECH STACK ─────────────────────────────────────────── -->
+<section class="stack-section">
+  <div class="section-label">Stack técnico</div>
+  <h2>Tecnologías que domino<br><em style="font-size:0.7em; color:var(--ink-muted)">y las que estoy conquistando</em></h2>
+
+  <div class="stack-grid">
+    {% set stack = [
+      ("🐍", "Python 3", "Core", 72),
+      ("⚡", "FastAPI", "Backend", 55),
+      ("🗄️", "PostgreSQL", "Base de datos", 45),
+      ("🔗", "SQLAlchemy", "ORM", 40),
+      ("🐙", "Git / GitHub", "Control de versiones", 65),
+      ("🐧", "Linux / Bash", "Sistema operativo", 58),
+      ("🐳", "Docker", "Contenedores", 25),
+      ("🔌", "Arduino", "Hardware", 38),
+      ("📐", "Álgebra Lineal", "Matemáticas", 60),
+      ("📊", "SQL", "Consultas", 50),
+    ] %}
+    {% for icon, name, area, pct in stack %}
+    <div class="stack-item">
+      <span class="stack-icon">{{ icon }}</span>
+      <span class="stack-name">{{ name }}</span>
+      <span class="stack-level">{{ area }}</span>
+      <div class="stack-bar">
+        <div class="stack-bar-fill" style="width:{{ pct }}%"></div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ── PROYECTOS ──────────────────────────────────────────── -->
+<section class="projects-section" id="proyectos">
+  <div class="projects-inner">
+    <div class="section-label">Portafolio</div>
+    <h2>Proyectos</h2>
+
+    <div class="projects-grid">
+      <div class="project-card" data-num="01">
+        <p class="project-cat">Backend · API</p>
+        <h3>Este portafolio</h3>
+        <p>Web app completa con FastAPI, Jinja2 y SQLite. Sistema de blog con CRUD, formulario de contacto con persistencia, y despliegue listo para producción.</p>
+        <div class="project-footer">
+          <span class="tag">FastAPI</span>
+          <span class="tag">Jinja2</span>
+          <span class="tag">SQLite</span>
+          <span class="tag">Python</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-num="02">
+        <p class="project-cat">Automatización · Scripts</p>
+        <h3>Automatizador de reportes</h3>
+        <p>Script Python que lee datos de Excel, los procesa y genera reportes PDF automatizados. Usado internamente para reducir trabajo manual en obra.</p>
+        <div class="project-footer">
+          <span class="tag">Python</span>
+          <span class="tag">openpyxl</span>
+          <span class="tag">reportlab</span>
+          <span class="wip-badge">En desarrollo</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-num="03">
+        <p class="project-cat">Hardware · IoT</p>
+        <h3>Monitor de temperatura Arduino</h3>
+        <p>Sensor NTC conectado a Arduino que envía datos de temperatura vía serial. Próxima fase: recibir los datos con Python y visualizarlos en tiempo real.</p>
+        <div class="project-footer">
+          <span class="tag">Arduino</span>
+          <span class="tag">C++</span>
+          <span class="tag">Python</span>
+          <span class="tag">Serial</span>
+          <span class="wip-badge">En progreso</span>
+        </div>
+      </div>
+
+      <div class="project-card" data-num="04">
+        <p class="project-cat">Backend · REST API</p>
+        <h3>API de gestión de tareas</h3>
+        <p>API RESTful construida con FastAPI y PostgreSQL. Autenticación JWT, operaciones CRUD completas, y documentación automática con Swagger. Proyecto de práctica del plan de estudios.</p>
+        <div class="project-footer">
+          <span class="tag">FastAPI</span>
+          <span class="tag">PostgreSQL</span>
+          <span class="tag">JWT</span>
+          <span class="tag">SQLAlchemy</span>
+          <span class="wip-badge">Próximo</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BLOG PREVIEW ───────────────────────────────────────── -->
+<section class="blog-preview">
+  <div class="blog-preview-header">
+    <div>
+      <div class="section-label">Escritura</div>
+      <h2>Últimas entradas del blog</h2>
+    </div>
+    <a href="/blog" class="btn">Ver todo el blog →</a>
+  </div>
+
+  <div class="post-list">
+    {% for post in recent_posts %}
+    <a href="/blog/{{ post.slug }}" class="post-item">
+      <div class="post-num">0{{ loop.index }}</div>
+      <div>
+        <span class="post-cat-badge cat-{{ post.category }}">{{ post.category | capitalize }}</span>
+        <div class="post-title">{{ post.title }}</div>
+        <div class="post-summary">{{ post.summary }}</div>
+      </div>
+      <div class="post-arrow">→</div>
+    </a>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- ── CONTACTO ───────────────────────────────────────────── -->
+<section class="contact-section" id="contacto">
+  <div class="contact-inner">
+    <div class="contact-left">
+      <div class="section-label">Contacto</div>
+      <h2>Trabajemos<br>juntos</h2>
+      <p>
+        Estoy disponible para proyectos freelance, oportunidades de trabajo remoto, colaboraciones y cualquier idea interesante. No dudes en escribirme.
+      </p>
+      <div class="contact-links">
+        <a href="mailto:ezequiel@ejemplo.com" class="contact-link">
+          <span class="contact-link-icon">✉</span>
+          ezequiel@ejemplo.com
+        </a>
+        <a href="https://github.com/ezequielzamora" class="contact-link" target="_blank">
+          <span class="contact-link-icon">⌥</span>
+          github.com/ezequielzamora
+        </a>
+        <a href="https://linkedin.com/in/ezequielzamora" class="contact-link" target="_blank">
+          <span class="contact-link-icon">◈</span>
+          linkedin.com/in/ezequielzamora
+        </a>
+        <span class="contact-link">
+          <span class="contact-link-icon">◎</span>
+          Santiago, Chile · Disponible remoto
+        </span>
+      </div>
+    </div>
+
+    <div class="contact-form">
+      {% if mensaje_enviado %}
+      <div class="success-msg">
+        ✓ Mensaje enviado. Te respondo pronto.
+      </div>
+      {% endif %}
+
+      <form action="/contacto" method="post">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombre</label>
+            <input type="text" name="name" placeholder="Tu nombre" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" placeholder="tu@email.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Asunto</label>
+          <input type="text" name="subject" placeholder="¿De qué quieres hablar?" required>
+        </div>
+        <div class="form-group">
+          <label>Mensaje</label>
+          <textarea name="message" rows="5" placeholder="Cuéntame sobre tu proyecto, idea o propuesta..." required></textarea>
+        </div>
+        <div class="form-submit">
+          <button type="submit" class="btn">Enviar mensaje →</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Animate stack bars on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.querySelectorAll('.stack-bar-fill').forEach(bar => {
+          bar.style.width = bar.style.width; // trigger transition
+        });
+      }
+    });
+  }, { threshold: 0.2 });
+  document.querySelectorAll('.stack-grid').forEach(el => observer.observe(el));
+</script>
+{% endblock %}

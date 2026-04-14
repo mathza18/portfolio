@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Admin{% endblock %} — ez.zamora</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink:        #0a0a0f;
+      --ink-soft:   #2a2a35;
+      --ink-muted:  #6b6b80;
+      --paper:      #f5f3ee;
+      --paper-warm: #ede9e0;
+      --accent:     #c8410a;
+      --accent-alt: #1a4f8c;
+      --success:    #16a34a;
+      --line:       #d4cfc5;
+      --sidebar-w:  220px;
+
+      --font-serif: 'DM Serif Display', serif;
+      --font-body:  'DM Sans', sans-serif;
+      --font-mono:  'DM Mono', monospace;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0; }
+    body {
+      font-family: var(--font-body);
+      background: var(--paper);
+      color: var(--ink);
+      font-size: 14px;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      background: var(--ink);
+      color: var(--paper);
+      display: flex;
+      flex-direction: column;
+      padding: 1.8rem 0;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 50;
+    }
+    .sidebar-logo {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      padding: 0 1.5rem 1.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .sidebar-logo .dot {
+      width: 6px; height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .sidebar-section {
+      font-family: var(--font-mono);
+      font-size: 0.6rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      padding: 1.2rem 1.5rem 0.4rem;
+    }
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0.55rem 1.5rem;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.65);
+      text-decoration: none;
+      transition: all .15s;
+      border-left: 2px solid transparent;
+    }
+    .sidebar-link:hover {
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+    }
+    .sidebar-link.active {
+      color: #fff;
+      border-left-color: var(--accent);
+      background: rgba(255,255,255,0.05);
+    }
+    .sidebar-link .icon { font-size: 0.9rem; width: 16px; }
+    .sidebar-footer {
+      margin-top: auto;
+      padding: 1rem 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .sidebar-footer a {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: rgba(255,255,255,0.3);
+      text-decoration: none;
+      display: block;
+      margin-bottom: 0.4rem;
+      transition: color .15s;
+    }
+    .sidebar-footer a:hover { color: rgba(255,255,255,0.7); }
+
+    /* ── MAIN ── */
+    .main {
+      margin-left: var(--sidebar-w);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar {
+      background: var(--paper);
+      border-bottom: 1px solid var(--line);
+      padding: 0.9rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .topbar-title {
+      font-family: var(--font-serif);
+      font-size: 1.15rem;
+      color: var(--ink);
+    }
+    .topbar-right {
+      display: flex; gap: 0.8rem; align-items: center;
+    }
+    .content {
+      padding: 2rem;
+      flex: 1;
+    }
+
+    /* ── COMPONENTS ── */
+    .btn {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 0.5rem 1.1rem;
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      letter-spacing: 0.04em;
+      border: 1.5px solid var(--ink);
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all .15s;
+      white-space: nowrap;
+    }
+    .btn:hover { background: var(--ink); color: var(--paper); }
+    .btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn-primary:hover { background: var(--ink); border-color: var(--ink); }
+    .btn-danger  { border-color: #dc2626; color: #dc2626; }
+    .btn-danger:hover  { background: #dc2626; color: #fff; }
+    .btn-sm { padding: 0.3rem 0.7rem; font-size: 0.66rem; }
+    .btn-ghost {
+      border-color: transparent;
+      color: var(--ink-muted);
+    }
+    .btn-ghost:hover { background: var(--paper-warm); color: var(--ink); border-color: transparent; }
+
+    .badge {
+      display: inline-flex; align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      padding: 2px 8px;
+      border: 1px solid;
+    }
+    .badge-pub  { color: var(--success); border-color: var(--success); background: rgba(22,163,74,0.07); }
+    .badge-draft{ color: var(--ink-muted); border-color: var(--line); background: var(--paper-warm); }
+    .badge-unread { color: var(--accent); border-color: var(--accent); background: rgba(200,65,10,0.07); }
+    .badge-read   { color: var(--ink-muted); border-color: var(--line); }
+
+    .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--line);
+    }
+    .card-title {
+      font-family: var(--font-serif);
+      font-size: 1rem;
+      color: var(--ink);
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin-bottom: 2rem;
+    }
+    .stat-box {
+      background: var(--paper);
+      padding: 1.2rem 1.5rem;
+    }
+    .stat-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      margin-bottom: 0.3rem;
+    }
+    .stat-value {
+      font-family: var(--font-serif);
+      font-size: 2rem;
+      color: var(--ink);
+      line-height: 1;
+    }
+
+    /* ── TABLE ── */
+    .table-wrap { overflow-x: auto; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+    th {
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-muted);
+      text-align: left;
+      padding: 0.6rem 0.8rem;
+      border-bottom: 1px solid var(--line);
+      white-space: nowrap;
+    }
+    td {
+      padding: 0.75rem 0.8rem;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: var(--paper-warm); }
+    .td-title { font-weight: 500; max-width: 260px; }
+    .td-title a { color: var(--ink); text-decoration: none; }
+    .td-title a:hover { color: var(--accent); }
+    .td-actions { display: flex; gap: 0.4rem; white-space: nowrap; }
+    .td-cat {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      padding: 2px 7px;
+      border: 1px solid;
+    }
+    .cat-computacion { color: var(--accent-alt); border-color: var(--accent-alt); }
+    .cat-matematicas { color: #7c3aed; border-color: #7c3aed; }
+    .cat-fisica      { color: var(--accent); border-color: var(--accent); }
+
+    .section-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .section-label::after {
+      content:''; flex:1; max-width:40px; height:1px; background:var(--accent); opacity:.4;
+    }
+  </style>
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+<aside class="sidebar">
+  <div class="sidebar-logo">
+    <span class="dot"></span>
+    ez.zamora / admin
+  </div>
+
+  <p class="sidebar-section">Contenido</p>
+  <a href="/admin" class="sidebar-link {% if active=='dashboard' %}active{% endif %}">
+    <span class="icon">⊞</span> Dashboard
+  </a>
+  <a href="/admin/posts/nuevo" class="sidebar-link {% if active=='nuevo' %}active{% endif %}">
+    <span class="icon">＋</span> Nuevo post
+  </a>
+
+  <p class="sidebar-section">Sitio</p>
+  <a href="/" class="sidebar-link" target="_blank">
+    <span class="icon">↗</span> Ver sitio
+  </a>
+  <a href="/blog" class="sidebar-link" target="_blank">
+    <span class="icon">↗</span> Ver blog
+  </a>
+
+  <div class="sidebar-footer">
+    <a href="/admin/logout">Cerrar sesión →</a>
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <span class="topbar-title">{% block topbar_title %}Panel admin{% endblock %}</span>
+    <div class="topbar-right">
+      <a href="/admin/posts/nuevo" class="btn btn-primary btn-sm">＋ Nuevo post</a>
+    </div>
+  </div>
+
+  <div class="content">
+    {% block content %}{% endblock %}
+  </div>
+</div>
+
+</body>
+</html>

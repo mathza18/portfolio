@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}{{ post.title }} — Blog de Ezequiel Zamora{% endblock %}
+{% block description %}{{ post.summary }}{% endblock %}
+
+{% block extra_head %}
+<style>
+  .post-header {
+    background: var(--paper-warm);
+    border-bottom: 1px solid var(--line);
+    padding: 4rem var(--gap) 3rem;
+  }
+  .post-header-inner {
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .post-meta {
+    display: flex; align-items: center; gap: 0.8rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .post-cat-badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border: 1px solid;
+  }
+  .cat-computacion { color: var(--accent-alt); border-color: var(--accent-alt); background: rgba(26,79,140,0.05); }
+  .cat-matematicas { color: #7c3aed; border-color: #7c3aed; background: rgba(124,58,237,0.05); }
+  .cat-fisica      { color: var(--accent); border-color: var(--accent); background: rgba(200,65,10,0.05); }
+  .post-date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-muted);
+  }
+  .post-header h1 {
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.2;
+    color: var(--ink);
+    margin-bottom: 1.2rem;
+  }
+  .post-header .summary {
+    font-size: 1.1rem;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    font-style: italic;
+    border-left: 3px solid var(--accent);
+    padding-left: 1.2rem;
+  }
+
+  .post-body-wrap {
+    max-width: 760px;
+    margin: 4rem auto;
+    padding: 0 var(--gap);
+  }
+  .post-content {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--ink-soft);
+  }
+  .post-content p { margin-bottom: 1.4rem; }
+  .post-content h2 {
+    font-size: 1.6rem;
+    color: var(--ink);
+    margin: 2.5rem 0 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .post-content h3 {
+    font-size: 1.2rem;
+    color: var(--ink);
+    margin: 2rem 0 0.7rem;
+  }
+  .post-content strong { color: var(--ink); font-weight: 500; }
+  .post-content em { font-style: italic; color: var(--ink); }
+  .post-content ul, .post-content ol {
+    padding-left: 1.5rem;
+    margin-bottom: 1.4rem;
+  }
+  .post-content li { margin-bottom: 0.4rem; }
+
+  .post-tags {
+    display: flex; gap: 0.5rem; flex-wrap: wrap;
+    margin: 3rem 0 0;
+    padding-top: 2rem;
+    border-top: 1px solid var(--line);
+  }
+  .tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 3px 10px;
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    color: var(--ink-muted);
+  }
+
+  .post-nav {
+    max-width: 760px;
+    margin: 3rem auto;
+    padding: 0 var(--gap);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .author-card {
+    background: var(--paper-warm);
+    border: 1px solid var(--line);
+    padding: 2rem;
+    max-width: 760px;
+    margin: 2rem auto;
+    margin-left: var(--gap);
+    margin-right: var(--gap);
+    display: flex; gap: 1.5rem; align-items: center;
+  }
+  .author-avatar {
+    width: 56px; height: 56px;
+    background: var(--ink);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 1.4rem;
+    color: var(--paper);
+    flex-shrink: 0;
+    font-style: italic;
+  }
+  .author-name {
+    font-family: var(--font-serif);
+    font-size: 1rem;
+    color: var(--ink);
+    margin-bottom: 0.3rem;
+  }
+  .author-bio {
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  @media(max-width: 640px) {
+    .author-card { flex-direction: column; gap: 1rem; margin: 2rem var(--gap); }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="post-header">
+  <div class="post-header-inner animate">
+    <div class="post-meta">
+      <span class="post-cat-badge cat-{{ post.category }}">{{ post.category | capitalize }}</span>
+      <span class="post-date">{{ post.created_at[:10] }}</span>
+    </div>
+    <h1>{{ post.title }}</h1>
+    <p class="summary">{{ post.summary }}</p>
+  </div>
+</div>
+
+<div class="post-body-wrap animate delay-1">
+  <div class="post-content">
+    {% set lines = post.content.split('\n') %}
+    {% set in_code = false %}
+    {% for line in lines %}
+      {% if line.startswith('```') %}
+        {% if not in_code %}
+          <pre><code>
+          {%- set in_code = true %}
+        {% else %}
+          </code></pre>
+          {%- set in_code = false %}
+        {% endif %}
+      {% elif in_code %}
+        {{ line }}
+      {% elif line.startswith('**') and line.endswith('**') %}
+        <h3>{{ line[2:-2] }}</h3>
+      {% elif line == '' %}
+        </p><p>
+      {% else %}
+        {{ line | replace('**', '<strong>') | replace('**', '</strong>') }}
+      {% endif %}
+    {% endfor %}
+  </div>
+
+  <div class="post-tags">
+    {% for tag in tags %}
+    <span class="tag"># {{ tag }}</span>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="author-card animate delay-2">
+  <div class="author-avatar">E</div>
+  <div>
+    <div class="author-name">Ezequiel Zamora</div>
+    <div class="author-bio">
+      Venezolano en Santiago 🇻🇪🇨🇱 · Python backend en formación · Entusiasta de la física, las matemáticas y la electrónica. Escribo sobre lo que aprendo mientras lo aprendo.
+    </div>
+  </div>
+</div>
+
+<div class="post-nav animate delay-2">
+  <a href="/blog" class="btn">← Volver al blog</a>
+  <a href="/#contacto" class="btn btn-solid">Contáctame</a>
+</div>
+
+{% endblock %}
